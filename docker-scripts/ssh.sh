@@ -33,7 +33,9 @@ else
     sed -i 's|#PasswordAuthentication yes|PasswordAuthentication no|' /etc/ssh/sshd_config
 fi
 
-sed -i "s|#Port 22|Port ${SSH_PORT}|" /etc/ssh/sshd_config
+if [ -n "${SSH_PORT}" ]; then
+    sed -i "s|#Port 22|Port ${SSH_PORT}|" /etc/ssh/sshd_config
+fi
 
 # Start the SSH service
 service ssh start

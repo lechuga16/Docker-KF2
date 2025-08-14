@@ -54,6 +54,42 @@ Edita el archivo `.env` para personalizar:
 | `KF2_STEAM_PORT` | 20560 | Puerto de red Steam (UDP) |
 | `KF2_NTP_PORT` | 123 | Puerto NTP para Weekly Outbreak (UDP) |
 
+### ⚠️ Configuración SSH Importante
+
+**Problema de configuración de puertos SSH:**
+
+Si defines `SSH_PORT` en environment Y en ports al mismo tiempo, ocurrirá un conflicto:
+
+```yaml
+# ❌ CONFIGURACIÓN INCORRECTA - Causará conflicto
+environment:
+  - SSH_PORT=2222  # SSH escuchará en puerto 2222 interno
+ports:
+  - "2222:22/tcp"  # Mapea puerto 2222 externo a 22 interno (pero SSH no escucha 22)
+```
+
+**Soluciones:**
+
+1. **Opción A - Mapeo de puertos (Recomendado):**
+```yaml
+# ✅ CORRECTO - No definir SSH_PORT en environment
+environment:
+  - LGSM_PASSWORD=${LGSM_PASSWORD}
+  - SSH_KEY=${SSH_KEY}
+  # NO incluir SSH_PORT aquí
+ports:
+  - "${SSH_PORT}:22/tcp"  # SSH escucha en 22 interno, mapea a SSH_PORT externo
+```
+
+2. **Opción B - network_mode: host:**
+```yaml
+# ✅ CORRECTO - Usar SSH_PORT en environment sin mapeo
+environment:
+  - SSH_PORT=${SSH_PORT}  # SSH escuchará directamente en SSH_PORT
+network_mode: host
+# No usar ports: cuando se usa network_mode: host
+```
+
 ### Configuración del Servidor
 
 Después de iniciar el contenedor, conecta via SSH y configura:
@@ -164,6 +200,11 @@ docker exec -it kf2-server service ssh status
 # Verificar configuración SSH
 docker exec -it kf2-server cat /etc/ssh/sshd_config
 ```
+
+**Problema común:** SSH no responde en el puerto esperado
+- Si definiste `SSH_PORT` en environment, SSH escuchará en ese puerto interno
+- Si usas mapeo de puertos `"${SSH_PORT}:22/tcp"`, SSH debe escuchar en puerto 22 interno
+- **Solución:** Remover `SSH_PORT` del environment o usar `network_mode: host`
 
 ### El servidor no aparece en el navegador
 1. Verificar que los puertos estén correctamente reenviados
