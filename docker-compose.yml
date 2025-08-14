@@ -16,17 +16,6 @@ services:
       - "${KF2_STEAM_PORT}:20560/udp"      # Steam Port (UDP) - Puerto de Steam
       - "${KF2_NTP_PORT}:123/udp"          # NTP Port (UDP) - Weekly Outbreak only
       - "${SSH_PORT}:22/tcp"               # SSH Port (TCP) - Para acceso SSH
-    healthcheck:
-      test: ["CMD-SHELL", "/app/entrypoint-healthcheck.sh || exit 1"]
-      interval: 1m
-      timeout: 1m
-      start_period: 2m
-      retries: 1
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
 volumes:
   kf2_data:

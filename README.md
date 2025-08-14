@@ -1,8 +1,9 @@
 # Servidor Docker KF2
 
-![Docker Pulls](https://img.shields.io/docker/pulls/lechuga16/docker-kf2)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/lechuga16/Docker-KF2/docker-build.yml?branch=main)
-![Docker Image Size](https://img.shields.io/docker/image-size/lechuga16/docker-kf2/latest)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/lechuga16/Docker-KF2/docker-build.yml?branch=main&label=Build)](https://github.com/lechuga16/Docker-KF2/actions)
+[![GitHub Release](https://img.shields.io/github/v/release/lechuga16/Docker-KF2?label=Release)](https://github.com/lechuga16/Docker-KF2/releases)
+[![License](https://img.shields.io/github/license/lechuga16/Docker-KF2?label=License)](https://github.com/lechuga16/Docker-KF2/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/lechuga16/Docker-KF2?style=social)](https://github.com/lechuga16/Docker-KF2)
 
 Servidor dedicado de Killing Floor 2 usando LinuxGSM con soporte SSH ejecutándose en Docker.
 
