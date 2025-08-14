@@ -10,6 +10,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ### Deprecated
 ### Removido
 ### Corregido
+- Documentación de conflicto SSH_PORT: cuando se define SSH_PORT en environment junto con mapeo de puertos, genera conflicto de configuración
+- Explicación clara de dos opciones válidas para configuración SSH
+
 ### Seguridad
 
 ## [1.0.0] - 2025-08-14
