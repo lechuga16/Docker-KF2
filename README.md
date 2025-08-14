@@ -2,7 +2,8 @@
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/lechuga16/Docker-KF2/docker-build.yml?branch=main&label=Build)](https://github.com/lechuga16/Docker-KF2/actions)
 [![GitHub Release](https://img.shields.io/github/v/release/lechuga16/Docker-KF2?label=Release)](https://github.com/lechuga16/Docker-KF2/releases)
-[![License](https://img.shields.io/github/license/lechuga16/Docker-KF2?label=License)](https://github.com/lechuga16/Docker-KF2/blob/main/LICENSE)
+[![KF2 Version](https://img.shields.io/badge/KF2-Latest-blue?label=Killing%20Floor%202)](https://store.steampowered.com/app/232090/Killing_Floor_2/)
+[![LinuxGSM](https://img.shields.io/badge/LinuxGSM-Supported-green)](https://linuxgsm.com/)
 
 Servidor dedicado de Killing Floor 2 usando LinuxGSM con soporte SSH ejecutándose en Docker.
 
