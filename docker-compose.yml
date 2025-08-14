@@ -1,0 +1,33 @@
+services:
+  kf2-server:
+    image: ghcr.io/lechuga16/docker-kf2:latest
+    container_name: kf2-server
+    restart: unless-stopped
+    volumes:
+      - kf2_data:/data
+    environment:
+      - LGSM_PASSWORD=${LGSM_PASSWORD}
+      - SSH_PORT=${SSH_PORT}
+      - SSH_KEY=${SSH_KEY}
+    ports:
+      - "${KF2_GAME_PORT}:7777/udp"        # Game Port (UDP) - Puerto principal del juego
+      - "${KF2_QUERY_PORT}:27015/udp"      # Query Port (UDP) - Steam Master Server
+      - "${KF2_WEBADMIN_PORT}:8080/tcp"    # Web Admin (TCP) - Panel de administración web
+      - "${KF2_STEAM_PORT}:20560/udp"      # Steam Port (UDP) - Puerto de Steam
+      - "${KF2_NTP_PORT}:123/udp"          # NTP Port (UDP) - Weekly Outbreak only
+      - "${SSH_PORT}:22/tcp"               # SSH Port (TCP) - Para acceso SSH
+    healthcheck:
+      test: ["CMD-SHELL", "/app/entrypoint-healthcheck.sh || exit 1"]
+      interval: 1m
+      timeout: 1m
+      start_period: 2m
+      retries: 1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  kf2_data:
+    name: kf2_data

@@ -1,0 +1,106 @@
+# =============================================================================
+# Docker KF2 Server - Git Attributes File
+# =============================================================================
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.md text
+*.txt text
+*.yml text
+*.yaml text
+*.json text
+*.js text
+*.ts text
+*.css text
+*.html text
+*.xml text
+*.conf text
+*.cfg text
+*.ini text
+*.toml text
+
+# Shell scripts (Unix line endings)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Dockerfile (Unix line endings)
+Dockerfile* text eol=lf
+*.dockerfile text eol=lf
+
+# Docker Compose files (Unix line endings)
+docker-compose*.yml text eol=lf
+docker-compose*.yaml text eol=lf
+
+# Configuration files
+.env* text
+.gitignore text
+.gitattributes text
+.editorconfig text
+
+# Documentation
+README* text
+CHANGELOG* text
+LICENSE* text
+CONTRIBUTING* text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# Archive files
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.xz binary
+*.zip binary
+*.rar binary
+
+# Docker related binaries
+*.tar.gz binary
+
+# Linguist overrides for GitHub language detection
+# (helps GitHub properly identify the project language)
+*.md linguist-detectable=false
+*.yml linguist-detectable=false
+*.yaml linguist-detectable=false
+*.json linguist-detectable=false
+
+# Mark generated files
+docs/api/* linguist-generated=true
+coverage/* linguist-generated=true
+
+# Export ignore (files not included in git archive)
+.gitattributes export-ignore
+.gitignore export-ignore
+.github/ export-ignore
+.vscode/ export-ignore
+.idea/ export-ignore
+*.md export-ignore
