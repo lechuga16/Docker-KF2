@@ -1,0 +1,79 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "Previous tag: $PREV_TAG"
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          echo "## 🐳 Imagen Docker" > release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "docker pull ghcr.io/lechuga16/docker-kf2:${GITHUB_REF_NAME}" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+          echo "" >> release_notes.md
+          
+          echo "## 🔄 Actualización Rápida" >> release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "# Detener contenedor actual" >> release_notes.md
+          echo "docker compose down" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "# Actualizar imagen en docker-compose.yml" >> release_notes.md
+          echo "sed -i 's|docker-kf2:.*|docker-kf2:${GITHUB_REF_NAME}|' docker-compose.yml" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "# Descargar nueva imagen e iniciar" >> release_notes.md
+          echo "docker compose pull" >> release_notes.md
+          echo "docker compose up -d" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+          echo "" >> release_notes.md
+          
+          if [ -n "${{ steps.prev_tag.outputs.prev_tag }}" ]; then
+            echo "## 📋 Cambios desde ${{ steps.prev_tag.outputs.prev_tag }}" >> release_notes.md
+            git log ${{ steps.prev_tag.outputs.prev_tag }}..HEAD --pretty=format:"- %s" --no-merges >> release_notes.md
+          else
+            echo "## 📋 Cambios en esta versión" >> release_notes.md
+            echo "- Release inicial del servidor Docker KF2" >> release_notes.md
+          fi
+          
+          echo "" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "## 📊 Información de la Imagen" >> release_notes.md
+          echo "- **Registry:** GitHub Container Registry (ghcr.io)" >> release_notes.md
+          echo "- **Tag:** \`${GITHUB_REF_NAME}\`" >> release_notes.md
+          echo "- **Base:** LinuxGSM Ubuntu 24.04" >> release_notes.md
+          echo "- **Arquitectura:** linux/amd64" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "## 📖 Enlaces Útiles" >> release_notes.md
+          echo "- 📋 **Changelog completo:** [CHANGELOG.md](https://github.com/lechuga16/Docker-KF2/blob/main/CHANGELOG.md)" >> release_notes.md
+          echo "- 📖 **Documentación:** [README.md](https://github.com/lechuga16/Docker-KF2/blob/main/README.md)" >> release_notes.md
+          echo "- 🐛 **Reportar issues:** [GitHub Issues](https://github.com/lechuga16/Docker-KF2/issues)" >> release_notes.md
+          echo "- 💬 **Contribuir:** [CONTRIBUTING.md](https://github.com/lechuga16/Docker-KF2/blob/main/CONTRIBUTING.md)" >> release_notes.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

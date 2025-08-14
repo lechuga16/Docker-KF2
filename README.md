@@ -11,9 +11,6 @@ Servidor dedicado de Killing Floor 2 usando LinuxGSM con soporte SSH ejecutándo
 - ✅ **Servidor Dedicado Killing Floor 2** usando LinuxGSM
 - ✅ **Acceso SSH** para gestión del servidor
 - ✅ **Puertos Configurables** via variables de entorno
-- ✅ **Datos Persistentes** con volúmenes Docker
-- ✅ **Health Checks** para monitoreo del contenedor
-- ✅ **Soporte Multi-arquitectura** (linux/amd64)
 
 ## Inicio Rápido
 
