@@ -45,6 +45,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - Explicación clara de dos opciones válidas para configuración SSH
 - Problema de PlayFab reportando puertos incorrectos con mapeo directo de puertos
 - Documentación y comentarios mejorados en los scripts y `.env`.
+- Corrección en `KF2-workshop.sh`:
+  - Ahora elimina correctamente cualquier línea DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload y vacía de [IpDrv.TcpNetDriver] si KF2_WORKSHOP está vacío.
+  - Garantiza que nunca se duplique la línea DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload.
 
 ### Removido
 
