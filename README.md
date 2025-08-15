@@ -43,52 +43,22 @@ ssh linuxgsm@localhost -p 22
 
 Edita el archivo `.env` para personalizar:
 
-| Variable | Por Defecto | Descripción |
-|----------|-------------|-------------|
-| `LGSM_PASSWORD` | - | Contraseña para el usuario linuxgsm |
-| `SSH_PORT` | 22 | Puerto SSH para acceso al contenedor |
-| `SSH_KEY` | - | Clave(s) pública(s) SSH para autenticación |
-| `KF2_GAME_PORT` | 7777 | Puerto principal del juego (UDP) |
-| `KF2_QUERY_PORT` | 27015 | Puerto Steam Master Server (UDP) |
-| `KF2_WEBADMIN_PORT` | 8080 | Puerto del panel Web Admin (TCP) |
-| `KF2_STEAM_PORT` | 20560 | Puerto de red Steam (UDP) |
-| `KF2_NTP_PORT` | 123 | Puerto NTP para Weekly Outbreak (UDP) |
+| Variable               | Por Defecto | Descripción                                                        |
+|------------------------|-------------|--------------------------------------------------------------------|
+| `LGSM_PASSWORD`        | (blank)     | Contraseña para el usuario linuxgsm (SSH y sudo)                   |
+| `SSH_PORT`             | 22          | Puerto SSH para acceso al contenedor                               |
+| `SSH_KEY`              | (blank)     | Clave(s) pública(s) SSH para autenticación                         |
+| `KF2_GAME_PORT`        | 7777        | Puerto principal del juego (UDP)                                   |
+| `KF2_QUERY_PORT`       | 27015       | Puerto Steam Master Server (UDP)                                   |
+| `KF2_WEBADMIN_PORT`    | 8080        | Puerto del panel Web Admin (TCP)                                   |
+| `KF2_STEAM_PORT`       | 20560       | Puerto de red Steam (UDP)                                          |
+| `KF2_NTP_PORT`         | 123         | Puerto NTP para Weekly Outbreak (UDP)                              |
+| `KF2_WEBADMIN`         | false       | Habilita/deshabilita el panel Web Admin (true/false)               |
+| `KF2_ADMIN_PASSWORD`   | (blank)     | Contraseña de administrador para WebAdmin                          |
+| `KF2_MULTI_ADMIN`      | false       | Habilita soporte multi-admin en WebAdmin (true/false)              |
+| `KF2_WORKSHOP`         | []          | IDs de Workshop a suscribir (ej: [123,456])                       |
+| `KF2_TICKRATE`         | 30          | Tickrate del servidor (NetServerMaxTickRate)                       |
 
-### ⚠️ Configuración SSH Importante
-
-**Problema de configuración de puertos SSH:**
-
-Si defines `SSH_PORT` en environment Y en ports al mismo tiempo, ocurrirá un conflicto:
-
-```yaml
-# ❌ CONFIGURACIÓN INCORRECTA - Causará conflicto
-environment:
-  - SSH_PORT=2222  # SSH escuchará en puerto 2222 interno
-ports:
-  - "2222:22/tcp"  # Mapea puerto 2222 externo a 22 interno (pero SSH no escucha 22)
-```
-
-**Soluciones:**
-
-1. **Opción A - Mapeo de puertos (Recomendado):**
-```yaml
-# ✅ CORRECTO - No definir SSH_PORT en environment
-environment:
-  - LGSM_PASSWORD=${LGSM_PASSWORD}
-  - SSH_KEY=${SSH_KEY}
-  # NO incluir SSH_PORT aquí
-ports:
-  - "${SSH_PORT}:22/tcp"  # SSH escucha en 22 interno, mapea a SSH_PORT externo
-```
-
-2. **Opción B - network_mode: host:**
-```yaml
-# ✅ CORRECTO - Usar SSH_PORT en environment sin mapeo
-environment:
-  - SSH_PORT=${SSH_PORT}  # SSH escuchará directamente en SSH_PORT
-network_mode: host
-# No usar ports: cuando se usa network_mode: host
-```
 
 ### Configuración del Servidor
 
@@ -112,69 +82,18 @@ nano /data/config-lgsm/kf2server/kf2server.cfg
 
 Este proyecto soporta dos modos de red. **Elige UNO de los dos:**
 
-### **Opción A: Red Docker (Bridge) - Recomendado**
+- **Opción A: Red Docker (Bridge) - Recomendado**
+  - Usa la red interna de Docker con mapeo de puertos.
+  - Configuración en: `docker-compose.yml`
 
-Usa la red interna de Docker con mapeo de puertos.
+- **Opción B: Red Host**
+  - Usa directamente la red del host (más simple, menos aislamiento).
+  - Configuración en: `docker-compose.host.yml`
 
-```yaml
-services:
-  kf2-server:
-    image: ghcr.io/lechuga16/docker-kf2:latest
-    container_name: kf2-server
-    restart: unless-stopped
-    volumes:
-      - kf2_data:/data
-    environment:
-      - LGSM_PASSWORD=${LGSM_PASSWORD}
-      - SSH_KEY=${SSH_KEY}
-      # NO incluir variables de puerto en environment
-    ports:
-      - "${SSH_PORT:-22}:22/tcp"
-      - "${KF2_GAME_PORT:-7777}:${KF2_GAME_PORT:-7777}/udp"
-      - "${KF2_QUERY_PORT:-27015}:${KF2_QUERY_PORT:-27015}/udp"
-      - "${KF2_WEBADMIN_PORT:-8080}:${KF2_WEBADMIN_PORT:-8080}/tcp"
-      - "${KF2_STEAM_PORT:-20560}:${KF2_STEAM_PORT:-20560}/udp"
-      - "${KF2_NTP_PORT:-123}:${KF2_NTP_PORT:-123}/udp"
-    networks:
-      - kf2_network
+- **Opción Desarrollo:**
+  - Para desarrollo local y pruebas, usa: `docker-compose.dev.yml`
 
-networks:
-  kf2_network:
-    driver: bridge
-
-volumes:
-  kf2_data:
-    name: kf2_data
-```
-
-### **Opción B: Red Host**
-
-Usa directamente la red del host (más simple, menos aislamiento).
-
-```yaml
-services:
-  kf2-server:
-    image: ghcr.io/lechuga16/docker-kf2:latest
-    container_name: kf2-server
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - kf2_data:/data
-    environment:
-      - LGSM_PASSWORD=${LGSM_PASSWORD}
-      - SSH_KEY=${SSH_KEY}
-      - SSH_PORT=${SSH_PORT}
-      - KF2_GAME_PORT=${KF2_GAME_PORT}
-      - KF2_QUERY_PORT=${KF2_QUERY_PORT}
-      - KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT}
-      - KF2_STEAM_PORT=${KF2_STEAM_PORT}
-      - KF2_NTP_PORT=${KF2_NTP_PORT}
-    # NO incluir ports: - network_mode: host los maneja directamente
-
-volumes:
-  kf2_data:
-    name: kf2_data
-```
+Consulta los archivos mencionados para ver todas las variables y ejemplos de uso actualizados.
 
 ### **⚠️ Importante:**
 
@@ -222,30 +141,6 @@ docker compose -f docker-compose.dev.yml up -d --build
 
 ## Gestión del Servidor
 
-### Comandos Comunes de LinuxGSM
-
-```bash
-# Estado del servidor
-./kf2server details
-
-# Iniciar servidor
-./kf2server start
-
-# Detener servidor
-./kf2server stop
-
-# Reiniciar servidor
-./kf2server restart
-
-# Actualizar servidor
-./kf2server update
-
-# Monitorear servidor
-./kf2server monitor
-
-# Ver logs
-./kf2server console
-```
 
 ### Acceso Web Admin
 

@@ -41,7 +41,11 @@ RUN date > /build-time.txt
 
 COPY docker-scripts/ /app/docker-scripts/
 COPY server-scripts/ /app/server-scripts/
+
 COPY entrypoint.sh /app/entrypoint.sh
 COPY entrypoint-user.sh /app/entrypoint-user.sh
+RUN chmod +x /app/entrypoint.sh /app/entrypoint-user.sh \
+  && find /app/docker-scripts -type f -name "*.sh" -exec chmod +x {} + \
+  && find /app/server-scripts -type f -name "*.sh" -exec chmod +x {} +
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
