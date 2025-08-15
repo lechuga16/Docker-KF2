@@ -6,7 +6,7 @@
 echo "=== Configurando puertos personalizados KF2 ==="
 
 # Rutas de archivos de configuración
-KF2_CONFIG_FILE="/data/serverfiles/KFGame/Config/LinuxServer-KFEngine.ini"
+KF2_CONFIG_FILE="/data/serverfiles/KFGame/Config/kf2server/LinuxServer-KFEngine.ini"
 LGSM_CONFIG_FILE="/data/config-lgsm/kf2server/kf2server.cfg"
 WEBADMIN_CONFIG_FILE="/data/serverfiles/KFGame/Config/kf2server/KFWeb.ini"
 
@@ -89,15 +89,19 @@ configure_query_port() {
     
     if [ -z "${new_port}" ]; then
         echo "⚠️  KF2_QUERY_PORT no definido, usando puerto por defecto 27015"
-        return 0
+        new_port="27015"
     fi
     
-    if [ "${new_port}" = "27015" ]; then
-        echo "ℹ️  Query port ya es 27015, no se requieren cambios"
-        return 0
-    fi
+    echo "🔧 Configurando query port: ${new_port}"
     
-    echo "🔧 Configurando query port: 27015 → ${new_port}"
+    # Mostrar contenido actual del archivo para debug
+    echo "📄 kf2server.cfg antes de modificar:"
+    if [ -s "${LGSM_CONFIG_FILE}" ]; then
+        echo "    Archivo tiene contenido:"
+        cat "${LGSM_CONFIG_FILE}" | head -10
+    else
+        echo "    ℹ️  Archivo vacío o sin contenido"
+    fi
     
     # Hacer backup del archivo original
     if [ ! -f "${LGSM_CONFIG_FILE}.backup" ]; then
@@ -106,7 +110,7 @@ configure_query_port() {
     fi
     
     # Verificar si ya existe la línea queryport
-    if grep -q "^queryport=" "${LGSM_CONFIG_FILE}"; then
+    if grep -q "^queryport=" "${LGSM_CONFIG_FILE}" 2>/dev/null; then
         # Modificar línea existente
         sed -i "s/^queryport=.*/queryport=\"${new_port}\"/" "${LGSM_CONFIG_FILE}"
         echo "✅ Query port actualizado en kf2server.cfg (línea existente)"
@@ -116,11 +120,22 @@ configure_query_port() {
         echo "✅ Query port agregado en kf2server.cfg (nueva línea)"
     fi
     
+    # Mostrar contenido después de modificar
+    echo "📄 kf2server.cfg después de modificar:"
+    if [ -s "${LGSM_CONFIG_FILE}" ]; then
+        echo "    Contenido actual:"
+        cat "${LGSM_CONFIG_FILE}" | head -10
+    else
+        echo "    ⚠️  Archivo sigue vacío - problema en escritura"
+    fi
+    
     # Verificar el cambio
-    if grep -q "queryport=\"${new_port}\"" "${LGSM_CONFIG_FILE}"; then
+    if grep -q "queryport=\"${new_port}\"" "${LGSM_CONFIG_FILE}" 2>/dev/null; then
         echo "✅ Verificación exitosa: Query port ${new_port} configurado"
     else
         echo "❌ Error: No se pudo verificar el cambio de query port"
+        echo "📋 Contenido actual del archivo:"
+        cat "${LGSM_CONFIG_FILE}" 2>/dev/null || echo "    Error al leer archivo"
         return 1
     fi
 }

@@ -42,6 +42,6 @@ RUN date > /build-time.txt
 COPY docker-scripts/ /app/docker-scripts/
 COPY server-scripts/ /app/server-scripts/
 COPY entrypoint.sh /app/entrypoint.sh
-COPY entrypoint-kf2.sh /app/entrypoint-kf2.sh
+COPY entrypoint-user.sh /app/entrypoint-user.sh
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]

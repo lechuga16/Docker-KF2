@@ -51,6 +51,14 @@ export LGSM_SERVERFILES=${LGSM_SERVERFILES}
 export LGSM_DATADIR=${LGSM_DATADIR}
 export LGSM_CONFIG=${LGSM_CONFIG}
 
+# Export KF2 configuration variables
+export KF2_GAME_PORT=${KF2_GAME_PORT}
+export KF2_QUERY_PORT=${KF2_QUERY_PORT}
+export KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT}
+export KF2_WEBADMIN=${KF2_WEBADMIN}
+export KF2_STEAM_PORT=${KF2_STEAM_PORT}
+export KF2_NTP_PORT=${KF2_NTP_PORT}
+
 cd /app || exit
 
 # start cron
@@ -127,5 +135,5 @@ fi
 echo -e ""
 echo -e "Switch to user ${USER}"
 echo -e "================================="
-exec gosu "${USER}" /app/entrypoint-kf2.sh &
+exec gosu "${USER}" /app/entrypoint-user.sh &
 wait
