@@ -1,0 +1,20 @@
+services:
+  kf2-server:
+    image: ghcr.io/lechuga16/docker-kf2:latest
+    container_name: kf2-server
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - kf2_data:/data
+    environment:
+      - LGSM_PASSWORD=${LGSM_PASSWORD}
+      - SSH_KEY=${SSH_KEY}
+      - SSH_PORT=${SSH_PORT}
+      - KF2_GAME_PORT=${KF2_GAME_PORT}
+      - KF2_QUERY_PORT=${KF2_QUERY_PORT}
+      - KF2_WEBADMIN=${KF2_WEBADMIN:false}
+      - KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT}
+
+volumes:
+  kf2_data:
+    name: kf2_data

@@ -6,12 +6,29 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 ### Agregado
+- Sistema de configuración automática de puertos KF2 post-instalación
+- Script `server-scripts/configure-kf2-ports.sh` para configuración de puertos personalizados
+- Script `entrypoint-kf2.sh` como wrapper del entrypoint original
+- Soporte para configuración de WebAdmin con variable `KF2_WEBADMIN`
+- Configuración automática de `KF2_GAME_PORT` en `LinuxServer-KFEngine.ini`
+- Configuración automática de `KF2_QUERY_PORT` en `kf2server.cfg`
+- Configuración automática de `KF2_WEBADMIN_PORT` y `KF2_WEBADMIN` en `KFWeb.ini`
+- Dos modos de red: Docker Bridge y Host Network con archivos separados
+- Archivo `docker-compose.host.yml` para configuración de red host
+
 ### Cambiado
-### Deprecated
-### Removido
+- Mapeo de puertos mejorado con sintaxis `${PUERTO:-default}:${PUERTO:-default}` para puertos configurables
+- Mapeo de puertos fijos para `KF2_STEAM_PORT` y `KF2_NTP_PORT` (no configurables internamente)
+- Documentación completa de configuración de red en README.md
+
 ### Corregido
 - Documentación de conflicto SSH_PORT: cuando se define SSH_PORT en environment junto con mapeo de puertos, genera conflicto de configuración
 - Explicación clara de dos opciones válidas para configuración SSH
+- Problema de PlayFab reportando puertos incorrectos con mapeo directo de puertos
+
+### Removido
+
+### Deprecated
 
 ### Seguridad
 

@@ -108,12 +108,102 @@ nano /data/config-lgsm/kf2server/kf2server.cfg
 ./kf2server start
 ```
 
+## 🔧 Configuración de Red
+
+Este proyecto soporta dos modos de red. **Elige UNO de los dos:**
+
+### **Opción A: Red Docker (Bridge) - Recomendado**
+
+Usa la red interna de Docker con mapeo de puertos.
+
+```yaml
+services:
+  kf2-server:
+    image: ghcr.io/lechuga16/docker-kf2:latest
+    container_name: kf2-server
+    restart: unless-stopped
+    volumes:
+      - kf2_data:/data
+    environment:
+      - LGSM_PASSWORD=${LGSM_PASSWORD}
+      - SSH_KEY=${SSH_KEY}
+      # NO incluir variables de puerto en environment
+    ports:
+      - "${SSH_PORT:-22}:22/tcp"
+      - "${KF2_GAME_PORT:-7777}:${KF2_GAME_PORT:-7777}/udp"
+      - "${KF2_QUERY_PORT:-27015}:${KF2_QUERY_PORT:-27015}/udp"
+      - "${KF2_WEBADMIN_PORT:-8080}:${KF2_WEBADMIN_PORT:-8080}/tcp"
+      - "${KF2_STEAM_PORT:-20560}:${KF2_STEAM_PORT:-20560}/udp"
+      - "${KF2_NTP_PORT:-123}:${KF2_NTP_PORT:-123}/udp"
+    networks:
+      - kf2_network
+
+networks:
+  kf2_network:
+    driver: bridge
+
+volumes:
+  kf2_data:
+    name: kf2_data
+```
+
+### **Opción B: Red Host**
+
+Usa directamente la red del host (más simple, menos aislamiento).
+
+```yaml
+services:
+  kf2-server:
+    image: ghcr.io/lechuga16/docker-kf2:latest
+    container_name: kf2-server
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - kf2_data:/data
+    environment:
+      - LGSM_PASSWORD=${LGSM_PASSWORD}
+      - SSH_KEY=${SSH_KEY}
+      - SSH_PORT=${SSH_PORT}
+      - KF2_GAME_PORT=${KF2_GAME_PORT}
+      - KF2_QUERY_PORT=${KF2_QUERY_PORT}
+      - KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT}
+      - KF2_STEAM_PORT=${KF2_STEAM_PORT}
+      - KF2_NTP_PORT=${KF2_NTP_PORT}
+    # NO incluir ports: - network_mode: host los maneja directamente
+
+volumes:
+  kf2_data:
+    name: kf2_data
+```
+
+### **⚠️ Importante:**
+
+- **NO mezcles** ambos enfoques
+- **Red Docker**: Variables de puerto en `.env`, NO en `environment`
+- **Red Host**: Variables de puerto en `environment`, NO usar `ports:`
+
+### **¿Cuál elegir?**
+
+| Característica | Red Docker | Red Host |
+|---------------|------------|----------|
+| **Aislamiento** | ✅ Alto | ❌ Bajo |
+| **Configuración** | ⚠️ Más compleja | ✅ Simple |
+| **Múltiples instancias** | ✅ Fácil | ❌ Conflictos de puerto |
+| **Debugging** | ⚠️ Más difícil | ✅ Directo |
+| **Recomendado para** | Producción | Desarrollo/Testing |
+
 ## Archivos Docker Compose
 
-### Producción (`docker-compose.yml`)
-Usa imagen precompilada del GitHub Container Registry:
+### Red Docker Bridge (`docker-compose.yml`)
+Configuración por defecto con red Docker y mapeo de puertos:
 ```bash
 docker compose up -d
+```
+
+### Red Host (`docker-compose.host.yml`)
+Configuración con red del host para máximo rendimiento:
+```bash
+docker compose -f docker-compose.host.yml up -d
 ```
 
 ### Desarrollo (`docker-compose.dev.yml`)

@@ -9,8 +9,8 @@ services:
       - dev_data:/data
     environment:
       - LGSM_PASSWORD=${LGSM_PASSWORD}
-      - SSH_PORT=${SSH_PORT}
       - SSH_KEY=${SSH_KEY}
+      - KF2_WEBADMIN=${KF2_WEBADMIN:false}
     ports:
       - "${KF2_GAME_PORT}:7777/udp"        # Game Port (UDP) - Puerto principal del juego
       - "${KF2_QUERY_PORT}:27015/udp"      # Query Port (UDP) - Steam Master Server

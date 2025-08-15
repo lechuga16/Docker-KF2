@@ -127,5 +127,5 @@ fi
 echo -e ""
 echo -e "Switch to user ${USER}"
 echo -e "================================="
-exec gosu "${USER}" /app/entrypoint-user.sh &
+exec gosu "${USER}" /app/entrypoint-kf2.sh &
 wait
