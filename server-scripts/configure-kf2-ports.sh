@@ -6,9 +6,9 @@
 echo "=== Configurando puertos personalizados KF2 ==="
 
 # Rutas de archivos de configuración
-KF2_CONFIG_FILE="/data/serverfiles/KFGame/Config/kf2server/LinuxServer-KFEngine.ini"
-LGSM_CONFIG_FILE="/data/config-lgsm/kf2server/kf2server.cfg"
-WEBADMIN_CONFIG_FILE="/data/serverfiles/KFGame/Config/kf2server/KFWeb.ini"
+KF2_CONFIG_FILE="$HOME/serverfiles/KFGame/Config/kf2server/LinuxServer-KFEngine.ini"
+LGSM_CONFIG_FILE="$HOME/config-lgsm/kf2server/kf2server.cfg"
+WEBADMIN_CONFIG_FILE="$HOME/serverfiles/KFGame/Config/kf2server/KFWeb.ini"
 
 # Función para verificar archivos de configuración
 check_config_files() {

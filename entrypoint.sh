@@ -51,7 +51,8 @@ export LGSM_SERVERFILES=${LGSM_SERVERFILES}
 export LGSM_DATADIR=${LGSM_DATADIR}
 export LGSM_CONFIG=${LGSM_CONFIG}
 
-# Export KF2 configuration variables
+export SSH_PORT=${SSH_PORT}
+
 export KF2_GAME_PORT=${KF2_GAME_PORT}
 export KF2_QUERY_PORT=${KF2_QUERY_PORT}
 export KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT}
@@ -88,48 +89,6 @@ if ls /app/docker-scripts/*.sh 1> /dev/null 2>&1; then
   done
 else
   echo -e "No .sh files found in /app/docker-scripts"
-fi
-
-echo -e ""
-echo -e "Config Profile"
-echo -e "================================="
-if [ ! -f $HOME/.bashrc ]; then
-  echo -e "Creating $HOME/.bashrc"
-  cp /etc/skel/.bashrc $HOME/.bashrc
-  echo -e "Setting ownership for $HOME/.bashrc"
-  chown "${USER}":"${USER}" $HOME/.bashrc
-else
-  echo -e "$HOME/.bashrc already exists"
-fi
-
-if [ ! -d $HOME/.ssh ]; then
-  echo -e "Creating $HOME/.ssh"
-  mkdir -p $HOME/.ssh
-  echo -e "Setting ownership and permissions for $HOME/.ssh"
-  chown "${USER}":"${USER}" $HOME/.ssh
-  chmod 700 $HOME/.ssh
-else 
-  echo -e "$HOME/.ssh already exists"
-fi
-
-if [ ! -f $HOME/.ssh/authorized_keys ]; then
-  echo -e "Creating authorized_keys"
-  touch $HOME/.ssh/authorized_keys
-  
-  if [ -n "${SSH_KEY}" ]; then
-    IFS=',' read -ra KEYS <<< "${SSH_KEY}"
-    for key in "${KEYS[@]}"; do
-      echo -e "${key}" >> $HOME/.ssh/authorized_keys
-    done
-  else
-    echo -e "SSH_KEY is empty, skipping..."
-  fi
-  
-  echo -e "Setting ownership and permissions for $HOME/.ssh/authorized_keys"
-  chown "${USER}":"${USER}" $HOME/.ssh/authorized_keys
-  chmod 600 $HOME/.ssh/authorized_keys
-else
-  echo -e "authorized_keys already exists"
 fi
 
 echo -e ""
