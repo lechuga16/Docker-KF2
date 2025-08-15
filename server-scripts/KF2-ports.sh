@@ -1,8 +1,9 @@
 #!/bin/bash
-# Script: configure-kf2-ports.sh
+# Script: KF2-ports.sh (antes configure-kf2-ports.sh)
 # Description: Configures KF2 server ports in LinuxServer-KFEngine.ini
 # Execution: Post-installation, runs as linuxgsm user
 
+# (Contenido copiado de KF2_ports.sh)
 echo "=== Configurando puertos personalizados KF2 ==="
 
 # Rutas de archivos de configuración

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script: ssh.sh
+# Script: SSH-config.sh
 # Description: Configures the SSH service in the container, generates host keys (RSA, ECDSA, and ED25519),
 # and updates the SSH configuration to use a persistent directory ($HOME/ssh). It also enables or disables
 # password authentication based on the LGSM_PASSWORD variable.
@@ -36,14 +36,14 @@ current_auth=$(grep -E '^[# ]*PasswordAuthentication[ ]+(yes|no)' /etc/ssh/sshd_
 if [ -n "$current_auth" ]; then
     if [ "$current_auth" != "$desired_auth" ]; then
         sed -i "/^[# ]*PasswordAuthentication[ ]\+/c\PasswordAuthentication ${desired_auth}" /etc/ssh/sshd_config
-        echo "[ssh.sh] PasswordAuthentication cambiado: $current_auth → $desired_auth"
+        echo "[SSH-config.sh] PasswordAuthentication cambiado: $current_auth → $desired_auth"
         ssh_config_changed=1
     else
-        echo "[ssh.sh] PasswordAuthentication ya configurado en $desired_auth, sin cambios."
+        echo "[SSH-config.sh] PasswordAuthentication ya configurado en $desired_auth, sin cambios."
     fi
 else
     echo "PasswordAuthentication ${desired_auth}" >> /etc/ssh/sshd_config
-    echo "[ssh.sh] PasswordAuthentication agregado: $desired_auth"
+    echo "[SSH-config.sh] PasswordAuthentication agregado: $desired_auth"
     ssh_config_changed=1
 fi
 
@@ -53,18 +53,18 @@ if [ -n "${SSH_PORT}" ]; then
     if [ -n "$current_port" ]; then
         if [ "$current_port" != "$SSH_PORT" ]; then
             sed -i "/^[# ]*Port[ ]\+/c\Port ${SSH_PORT}" /etc/ssh/sshd_config
-            echo "[ssh.sh] Puerto SSH cambiado: $current_port → $SSH_PORT"
+            echo "[SSH-config.sh] Puerto SSH cambiado: $current_port → $SSH_PORT"
             ssh_config_changed=1
         else
-            echo "[ssh.sh] Puerto SSH ya configurado en $SSH_PORT, sin cambios."
+            echo "[SSH-config.sh] Puerto SSH ya configurado en $SSH_PORT, sin cambios."
         fi
     else
         echo "Port ${SSH_PORT}" >> /etc/ssh/sshd_config
-        echo "[ssh.sh] Puerto SSH agregado: $SSH_PORT"
+        echo "[SSH-config.sh] Puerto SSH agregado: $SSH_PORT"
         ssh_config_changed=1
     fi
 else
-    echo "[ssh.sh] SSH_PORT no definido, usando configuración por defecto."
+    echo "[SSH-config.sh] SSH_PORT no definido, usando configuración por defecto."
 fi
 
 # Recargar/reiniciar solo si hubo cambios

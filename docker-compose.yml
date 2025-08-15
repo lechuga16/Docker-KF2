@@ -7,14 +7,17 @@ services:
       - kf2_data:/data
     environment:
       - LGSM_PASSWORD=${LGSM_PASSWORD}
-      - SSH_KEY=${SSH_KEY}
       - SSH_PORT=${SSH_PORT}
+      - SSH_KEY=${SSH_KEY}
+
       - KF2_GAME_PORT=${KF2_GAME_PORT:-7777}
       - KF2_QUERY_PORT=${KF2_QUERY_PORT:-27015}
-      - KF2_WEBADMIN=${KF2_WEBADMIN:-false}
       - KF2_WEBADMIN_PORT=${KF2_WEBADMIN_PORT:-8080}
       - KF2_STEAM_PORT=${KF2_STEAM_PORT:-20560}
       - KF2_NTP_PORT=${KF2_NTP_PORT:-123}
+
+      - KF2_WEBADMIN=${KF2_WEBADMIN:-false}
+      - KF2_ADMIN_PASSWORD=${KF2_ADMIN_PASSWORD}
     ports:
       - "${SSH_PORT:-22}:${SSH_PORT:-22}/tcp"
       - "${KF2_GAME_PORT:-7777}:${KF2_GAME_PORT:-7777}/udp"

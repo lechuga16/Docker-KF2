@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script: manage-bashrc.sh
+# Script: BASH-manager.sh
 # Descripción: Gestiona la existencia y permisos de .bashrc para el usuario linuxgsm
 
 

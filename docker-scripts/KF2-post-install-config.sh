@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script: post-install-config.sh
+# Script: KF2-post-install-config.sh
 # Description: Executes server configuration scripts after KF2 installation
 # Location: /app/docker-scripts/ (executed during container startup)
 
