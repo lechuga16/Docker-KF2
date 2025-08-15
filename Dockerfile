@@ -40,6 +40,8 @@ HEALTHCHECK --interval=1m --timeout=1m --start-period=2m --retries=1 CMD /app/en
 RUN date > /build-time.txt
 
 COPY docker-scripts/ /app/docker-scripts/
+COPY server-scripts/ /app/server-scripts/
 COPY entrypoint.sh /app/entrypoint.sh
+COPY entrypoint-kf2.sh /app/entrypoint-kf2.sh
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
