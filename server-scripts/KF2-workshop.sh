@@ -18,6 +18,16 @@ if [ -z "${WORKSHOP_IDS[*]}" ] || [ "${WORKSHOP_IDS[*]}" = "" ]; then
             /^\[/ {if(in_section){in_section=0}}
             {if(!in_section) print}
         ' "$WORKSHOP_INI" > "$WORKSHOP_INI.tmp" && mv "$WORKSHOP_INI.tmp" "$WORKSHOP_INI"
+        # Eliminar cualquier línea DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload y DownloadManagers= (vacía) de la sección [IpDrv.TcpNetDriver]
+        tmpfile2=$(mktemp)
+        awk '
+            BEGIN {in_section=0}
+            /^\[IpDrv.TcpNetDriver\]$/ {in_section=1; print; next}
+            /^\[/ {in_section=0}
+            in_section && ($0=="DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload" || $0=="DownloadManagers=") {next}
+            {print}
+        ' "$WORKSHOP_INI" > "$tmpfile2" && mv "$tmpfile2" "$WORKSHOP_INI"
+        echo "[KF2-workshop.sh] Se eliminaron líneas DownloadManagers de [IpDrv.TcpNetDriver] porque no hay workshop."
         echo "[KF2-workshop.sh] Se eliminó la sección [OnlineSubsystemSteamworks.KFWorkshopSteamworks] de $WORKSHOP_INI porque KF2_WORKSHOP está vacío."
     else
         echo "[KF2-workshop.sh] No hay IDs de Workshop definidos y no existe $WORKSHOP_INI."
@@ -52,15 +62,15 @@ awk '
 # --- Asegurar DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload en [IpDrv.TcpNetDriver] ---
 tmpfile2=$(mktemp)
 if [ -z "${WORKSHOP_IDS[*]}" ] || [ "${WORKSHOP_IDS[*]}" = "" ]; then
-    # Si no hay IDs, eliminar la línea DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload de la sección [IpDrv.TcpNetDriver]
+    # Si no hay IDs, eliminar cualquier línea DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload y DownloadManagers= (vacía) de la sección [IpDrv.TcpNetDriver]
     awk '
         BEGIN {in_section=0}
         /^\[IpDrv.TcpNetDriver\]$/ {in_section=1; print; next}
         /^\[/ {in_section=0}
-        in_section && $0=="DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload" {next}
+        in_section && ($0=="DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload" || $0=="DownloadManagers=") {next}
         {print}
     ' "$WORKSHOP_INI" > "$tmpfile2" && mv "$tmpfile2" "$WORKSHOP_INI"
-    echo "[KF2-workshop.sh] Se eliminó DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload de [IpDrv.TcpNetDriver] porque no hay workshop."
+    echo "[KF2-workshop.sh] Se eliminaron líneas DownloadManagers de [IpDrv.TcpNetDriver] porque no hay workshop."
 else
     # Si hay IDs, asegurar que la línea esté como la primera DownloadManagers en la sección
     awk '
@@ -70,11 +80,9 @@ else
             if(in_section && !inserted){print "DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload"; inserted=1}
             in_section=0
         }
+        in_section && $0=="DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload" {next}
         in_section && !inserted && $0 !~ /^DownloadManagers=/ {
             print "DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload"; inserted=1
-        }
-        in_section && $0=="DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload" {
-            if(!inserted){print; inserted=1} else {next}
         }
         {print}
         END{if(in_section && !inserted){print "DownloadManagers=OnlineSubsystemSteamworks.SteamWorkshopDownload"}}
