@@ -20,6 +20,9 @@ services:
       - KF2_WEBADMIN=${KF2_WEBADMIN:-false}
       - KF2_ADMIN_PASSWORD=${KF2_ADMIN_PASSWORD}
 
+      - KF2_WORKSHOP=${KF2_WORKSHOP:-[]}
+      - KF2_TICKRATE=${KF2_TICKRATE:-30}
+      
 volumes:
   kf2_data:
     name: kf2_data

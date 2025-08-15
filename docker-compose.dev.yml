@@ -21,6 +21,9 @@ services:
       - KF2_WEBADMIN=${KF2_WEBADMIN:-false}
       - KF2_ADMIN_PASSWORD=${KF2_ADMIN_PASSWORD}
       - KF2_MULTI_ADMIN=${KF2_MULTI_ADMIN:-false}
+
+      - KF2_WORKSHOP=${KF2_WORKSHOP:-[]}
+      - KF2_TICKRATE=${KF2_TICKRATE:-30}
     ports:
       - "${SSH_PORT:-22}:${SSH_PORT:-22}/tcp"
       - "${KF2_GAME_PORT:-7777}:${KF2_GAME_PORT:-7777}/udp"
