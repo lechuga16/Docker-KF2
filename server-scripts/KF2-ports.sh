@@ -43,44 +43,44 @@ check_config_files() {
     return 0
 }
 
-# Función para configurar puerto del juego
+"# Función para configurar puerto del juego (usando LinuxGSM kf2server.cfg)"
 configure_game_port() {
     local new_port="${1}"
-    
+    # Si está vacío, restablecer a valor por defecto 7777
     if [ -z "${new_port}" ]; then
         echo "⚠️  KF2_GAME_PORT no definido, usando puerto por defecto 7777"
-        return 0
+        new_port="7777"
     fi
-    
-    if [ "${new_port}" = "7777" ]; then
-        echo "ℹ️  Puerto del juego ya es 7777, no se requieren cambios"
-        return 0
+
+    echo "🔧 Configurando game port en LinuxGSM: ${new_port}"
+
+    # Backup del archivo LGSM
+    if [ ! -f "${LGSM_CONFIG_FILE}.backup" ]; then
+        cp "${LGSM_CONFIG_FILE}" "${LGSM_CONFIG_FILE}.backup" 2>/dev/null || true
+        echo "📦 Backup creado: ${LGSM_CONFIG_FILE}.backup"
     fi
-    
-    echo "🔧 Configurando puerto del juego: 7777 → ${new_port}"
-    
-    # Hacer backup del archivo original
-    if [ ! -f "${KF2_CONFIG_FILE}.backup" ]; then
-        cp "${KF2_CONFIG_FILE}" "${KF2_CONFIG_FILE}.backup"
-        echo "📦 Backup creado: ${KF2_CONFIG_FILE}.backup"
-    fi
-    
-    # Buscar y reemplazar el puerto
-    if grep -q "Port=7777" "${KF2_CONFIG_FILE}"; then
-        sed -i "s/Port=7777/Port=${new_port}/g" "${KF2_CONFIG_FILE}"
-        echo "✅ Puerto actualizado en LinuxServer-KFEngine.ini"
-        
-        # Verificar el cambio
-        if grep -q "Port=${new_port}" "${KF2_CONFIG_FILE}"; then
-            echo "✅ Verificación exitosa: Puerto ${new_port} configurado"
-        else
-            echo "❌ Error: No se pudo verificar el cambio de puerto"
-            return 1
-        fi
+
+    # Mostrar contenido antes (para debug rápido)
+    echo "📄 kf2server.cfg (antes):"; head -n 20 "${LGSM_CONFIG_FILE}" 2>/dev/null || true
+
+    # Escribir/actualizar 'port="<valor>"'
+    if grep -q '^port=' "${LGSM_CONFIG_FILE}" 2>/dev/null; then
+        sed -i "s/^port=.*/port=\"${new_port}\"/" "${LGSM_CONFIG_FILE}"
+        echo "✅ Game port actualizado en kf2server.cfg"
     else
-        echo "⚠️  No se encontró 'Port=7777' en el archivo de configuración"
-        echo "    Contenido actual de puertos:"
-        grep -n "Port=" "${KF2_CONFIG_FILE}" || echo "    No se encontraron líneas con 'Port='"
+        echo "port=\"${new_port}\"" >> "${LGSM_CONFIG_FILE}"
+        echo "✅ Game port agregado en kf2server.cfg"
+    fi
+
+    # Mostrar contenido después
+    echo "📄 kf2server.cfg (después):"; head -n 20 "${LGSM_CONFIG_FILE}" 2>/dev/null || true
+
+    # Verificación
+    if grep -q "^port=\"${new_port}\"" "${LGSM_CONFIG_FILE}" 2>/dev/null; then
+        echo "✅ Verificación exitosa: port=\"${new_port}\""
+    else
+        echo "❌ Error: No se pudo verificar el game port"
+        return 1
     fi
 }
 
@@ -232,7 +232,7 @@ show_current_config() {
     echo ""
     echo "⚙️  kf2server.cfg:"
     if [ -f "${LGSM_CONFIG_FILE}" ]; then
-        grep -n "queryport=" "${LGSM_CONFIG_FILE}" || echo "    ℹ️  queryport no configurado"
+        grep -n "^port=\|^queryport=" "${LGSM_CONFIG_FILE}" || echo "    ℹ️  port/queryport no configurados"
     else
         echo "    ❌ Archivo no encontrado"
     fi
